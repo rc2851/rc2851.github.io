@@ -1,0 +1,96 @@
+/*
+* {
+  border: 1px solid red !important;
+}
+*/
+
+#marker-tooltip {
+    display: none;
+    position:absolute;
+    width: 200px;
+    height: 20px;
+	z-index:2;
+    background-color: #fff;
+    margin: 15px;
+	opacity: 0.8;
+}
+
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+@media only screen and (max-width: 500px){
+	a, nav, button {
+		min-height: 48px;
+		min-width: 48px;
+	}
+}
+
+.left{
+    text-align: left;
+}
+
+.right{
+    text-align: right;
+}
+
+.center{
+    text-align: center;
+}
+
+#controls {
+	margin: 0 1%;
+	flex: 1 0 auto;
+}
+
+#map {
+	display: block;
+	height: 100%;
+	margin: 0 1%;
+}
+
+#mapDiv {
+	height: 600px;
+	padding-bottom: 1%;
+	flex: 1 0 auto;
+}
+
+.container {
+	margin: 0 auto;
+	width: 100%;
+}
+
+.row {
+	width: 100%;
+	margin-bottom: 1px;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.col-3 {
+	width: 320px;
+	padding-bottom: 2px;
+}
+
+.col-4 {
+    width: 33%;
+	padding-bottom: 2px;
+}
+
+.col-12 {
+	width: 100%;
+}
+
+#popup {
+	position: absolute;
+	display: hidden;
+	top: 160px;
+	left: 25px;
+	background-color:#fff;
+	z-index:2;
+	padding:5px;
+	opacity: 0.8;
+}

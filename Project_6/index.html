@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="Neighborhood Map Project">
+		<meta name="author" content="Robert Cannon">
+		<title>Neighborhood Map Project</title>
+		<script src="js/lib/jQuery.js"></script>  	
+		<script src="js/map.js"></script>
+		<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
+	   <link rel="stylesheet" scr="//normalize-css.googlecode.com/svn/truck/normalize.css" <link rel="stylesheet" href="css/style.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+		<script>
+			function popupHide(){
+				$("#popup").hide();
+			}
+			function clearSearch(){
+				//clear search box
+				self.query('');
+			}
+		</script>
+	</head>
+	<body>	
+		<div id="container" class="container">
+			<div class="row">
+				<div class="col-12">
+					<h1 class="center">Metrolink Stations</h1>
+				</div>
+			</div>
+			<div class="row" class="controls">
+				<div class="col-3 left" id="list">	
+					<form data-bind="event: {change: selectPlace}, enable: selectedChoice" onClick="clearSearch()";>
+						<strong>Stations:</strong>
+						<select id="selectList" 
+							data-bind="
+							options: placeList, 
+							optionsText: 'name', 
+							optionsValue: 'name', 
+							value: selectedChoice, 
+							optionsCaption: 'Choose...'">
+						</select>
+					</form>
+				</div>
+				<div class="col-3 left" id="search">	
+					<form action="" onsubmit="return false"> 
+						<strong>Search: </strong>
+						<input id="searchBox" placeholder="Search…" type="search" name="q" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off"> 
+					</form> 
+				</div>
+				<div class="col-6 left" id="msg">
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-12" id="mapDiv">
+				<div id="marker-tooltip"></div>
+					<div id="popup" onClick="popupHide()";>
+						<ol data-bind="foreach: searchList">
+							<li data-bind="text: name, click: setPlace"></li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+	  <!--tell the browser where to download locations -->
+	  <script src="js/model.js"></script>
+	  <!--knockout-->
+	  <script src="js/lib/knockout-3.2.0.js"></script>
+	  <!--viewmodel-->
+	  <script src="js/viewmodel.js"></script>
+	  <script type="text/javascript">
+		//load the data
+		getFoursquareData();
+		loadBindings();
+		initializeMap();
+		if(document.getElementById('map') === null) {
+		  //document.getElementById('mapDiv').style.display = 'none';
+		  document.getElementById("mapDiv").style.backgroundColor = "black";
+		}
+	  </script>
+	</body>
+</html>
