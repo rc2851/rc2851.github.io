@@ -1,4 +1,22 @@
-var Place = function(place){
+var placeList = ko.observableArray([]);
+var ShowToolTip = ko.observable(false);
+var tooltipX = ko.observable();
+var tooltipY = ko.observable();
+var tooltipContent = ko.observable();
+var msgData = ko.observable();
+
+var initApp = function() {
+	//load the data
+	getFoursquareData();
+	loadBindings();
+	initializeMap();
+	if (document.getElementById('map') === null) {
+		//document.getElementById('mapDiv').style.display = 'none';
+		document.getElementById("mapDiv").style.backgroundColor = "black";
+	}
+};
+
+var Place = function(place) {
 	this.id = ko.observable(place.id);
 	this.name = ko.observable(place.name.substring(12));
 	this.address = ko.observable(place.location.address);
@@ -6,58 +24,72 @@ var Place = function(place){
 	this.state = ko.observable(place.location.state);
 	this.lat = ko.observable(place.location.lat);
 	this.lng = ko.observable(place.location.lng);
-}
+};
 
-//placeList locations are loaded from ajax
-var placeList = ko.observableArray([]);
-
-var ViewModel = function(){
+var ViewModel = function() {
 	var self = this;
+
+	this.toolTip = function(x, y, data) {
+		//Set x,y for tooltip depending on location of map div
+		if ($("#mapDiv").position().left < 230) {
+			tooltipX(x + "px");
+			tooltipY((y + 310) + "px");
+		} else {
+			tooltipX((x + 220) + "px");
+			tooltipY((y + 100) + "px");
+		}
+		//set tooltip text
+		tooltipContent(data);
+		showToolTip(true);
+	};
+
 	//Current place observable
 	this.currentPlace = ko.observable(this.placeList()[1]);
 	//Set current place clicked
-	this.setPlace = function(clickedPlace){
+	this.setPlace = function(clickedPlace) {
 		//Put clicked place in currentPlace observable
 		self.currentPlace(clickedPlace);
 		//placeAssociation, makes an association between foursquare and google maps locations  
 		var places = placeAssociation.locations;
-		for(var i in places){
-			if(self.currentPlace().id() == places[i].foursquare){
+		for (var i in places) {
+			if (self.currentPlace().id() == places[i].foursquare) {
 				//loop markers
-				allMarkers.forEach(function(marker){
+				allMarkers.forEach(function(marker) {
 					//close all infowindow that may be open
 					marker.infowindow.close();
 					//set the marker color
 					marker.setIcon(markerIcon.yellow);
-					if(marker.id == places[i].google){
+					if (marker.id == places[i].google) {
 						//change the color of this marker
 						marker.setIcon(markerIcon.rail);
 						//bounce the this marker
 						marker.setAnimation(google.maps.Animation.BOUNCE);
-						setTimeout(function(){ marker.setAnimation(null); }, 750);
+						setTimeout(function() {
+							marker.setAnimation(null);
+						}, 750);
 						//set infowindow location information
 						marker.infowindow.setContent(getInfoWindowData(currentPlace().id()));
 						//marker.showInfoWindow();
-						marker.infowindow.open(map, marker);						
+						marker.infowindow.open(map, marker);
 					}
 				});
 			}
 		}
-	}
-	
+	};
+
 	self.selectedChoice = ko.observable();
 
 	//Function called when there is a change in the select list dropdown
-    self.selectPlace = function(){	
+	self.selectPlace = function() {
 		//Set current place from select list
-		ko.utils.arrayForEach(this.placeList(), function(place){
-			if(this.selectedChoice() != undefined){
-				if ((place.name().toLowerCase().indexOf(this.selectedChoice().toLowerCase()) >= 0)) { 
+		ko.utils.arrayForEach(this.placeList(), function(place) {
+			if (this.selectedChoice() !== undefined) {
+				if ((place.name().toLowerCase().indexOf(this.selectedChoice().toLowerCase()) >= 0)) {
 					setPlace(place);
-				};
-			};
+				}
+			}
 		});
-    };
+	};
 
 	//search observable
 	query = ko.observable('');
@@ -68,55 +100,52 @@ var ViewModel = function(){
 		//clear select listbox
 		self.selectedChoice(null);
 		//rest markers to default icon
-		allMarkers.forEach(function(marker){
+		allMarkers.forEach(function(marker) {
 			//close all infowindow that may be open
 			marker.infowindow.close();
 			marker.setIcon(markerIcon.yellow);
 		});
-		if(query().length > 0){			
+		//Remove all items in array
+		searchList.removeAll();
+		//query is for search list
+		if (query().length > 0) {
 			//hide all markers and close info window
-			allMarkers.forEach(function(marker){
+			allMarkers.forEach(function(marker) {
 				marker.setVisible(false);
 			});
-			//Remove items in array
-			searchList.removeAll();
 			//iterate placeList array
 			ko.utils.arrayForEach(this.placeList(), function(place) {
-				if ((place.name().toLowerCase().indexOf(query().toLowerCase()) >= 0) && (query().length > 0)) { 
+				if ((place.name().toLowerCase().indexOf(query().toLowerCase()) >= 0) && (query().length > 0)) {
 					//put this location in the searchList array
 					searchList.push(place);
 					//show markers associated with search list
 					placeAssociation.locations.forEach(function(placeAssoc) {
 						if (place.id() == placeAssoc.foursquare) {
 							//loop markers to set associated marker visible
-							allMarkers.forEach(function(marker){
-								if(placeAssoc.google == marker.id){
+							allMarkers.forEach(function(marker) {
+								if (placeAssoc.google == marker.id) {
 									marker.setVisible(true);
 								}
 							});
-						}	
+						}
 					});
 				}
-				//show/hide search list
-				if(searchList().length > 0){
-					$("#popup").show();
-				}else{
-					$("#popup").hide();
-				}
 			});
-		}else{
+		} else {
 			//show all markers
-			allMarkers.forEach(function(marker){
+			allMarkers.forEach(function(marker) {
 				marker.setVisible(true);
 			});
-			//Remove items in array
-			searchList.removeAll();
-			$("#popup").hide();
+			//iterate placeList array to show all location to searchList
+			ko.utils.arrayForEach(this.placeList(), function(place) {
+				//put this location in the searchList array
+				searchList.push(place);
+			});
 		}
 	});
-}
+};
 
 //apply bindings
- var loadBindings = function(){
-	 ko.applyBindings(ViewModel);
- };
+var loadBindings = function() {
+	ko.applyBindings(ViewModel);
+};
