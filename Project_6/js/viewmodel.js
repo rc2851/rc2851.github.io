@@ -1,5 +1,5 @@
 var placeList = ko.observableArray([]);
-var ShowToolTip = ko.observable(false);
+var showToolTip = ko.observable(false);
 var tooltipX = ko.observable();
 var tooltipY = ko.observable();
 var tooltipContent = ko.observable();
