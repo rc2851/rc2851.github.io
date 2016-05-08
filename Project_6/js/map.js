@@ -52,10 +52,10 @@ function initializeMap() {
 			var lng = place.lng;
 			var id = place.id;
 			//put location lat/lng in an array
-			locations.push(lat() + ", " + lng());
+			locations.push(lat + ", " + lng);
 			//put foursquare location id in json obj
 			placeAssociation.locations.push({
-				"foursquare": id(),
+				"foursquare": id,
 				"google": "pending"
 			});
 		});
@@ -187,8 +187,8 @@ function createMapMarker(placeData) {
 		var foursquareId = LocationMatch(googleLat, googleLng);
 		//loop place list to get correct marker location
 		ko.utils.arrayForEach(placeList(), function(place) {
-			if (foursquareId == place.id()) {
-				marker.tooltipContent = place.name();
+			if (foursquareId == place.id) {
+				marker.tooltipContent = place.name;
 			}
 		});
 		//show the tooltip
@@ -235,16 +235,16 @@ function resetMarkers() {
 function getInfoWindowData(id) {
 	//loop placeList array
 	ko.utils.arrayForEach(placeList(), function(place) {
-		if (place.id() == id) {
+		if (place.id == id) {
 			locationInfo = '<div id="content">' +
 				'<div id="siteNotice"></div>' +
 				'<div id="bodyContent">' +
-				'<h1 id="firstHeading" class="firstHeading">' + place.name() + '</h1>' +
-				'<p>Address: ' + place.address() + '<br>' +
-				'City: ' + place.city() + '<br>' +
-				'State: ' + place.state() + '<br>' +
-				'Lat: ' + place.lat() + '<br>' +
-				'Lng: ' + place.lng() + '</p>' +
+				'<h1 id="firstHeading" class="firstHeading">' + place.name + '</h1>' +
+				'<p>Address: ' + place.address + '<br>' +
+				'City: ' + place.city + '<br>' +
+				'State: ' + place.state + '<br>' +
+				'Lat: ' + place.lat + '<br>' +
+				'Lng: ' + place.lng + '</p>' +
 				'<a href="http://www.metrostlouis.org" ' +
 				'target="_blank">St.Louis Metrolink</a>' +
 				'</div>' +
@@ -262,10 +262,10 @@ function LocationMatch(googleLat, googleLng) {
 	var placeId;
 	//iterate locations array to match results
 	ko.utils.arrayForEach(placeList(), function(place) {
-		var latDifference = Math.abs(place.lat() - gLat).toFixed(3);
-		var lngDifference = Math.abs(place.lng() - gLng).toFixed(3);
+		var latDifference = Math.abs(place.lat - gLat).toFixed(3);
+		var lngDifference = Math.abs(place.lng - gLng).toFixed(3);
 		if (latDifference <= 0.001 && lngDifference <= 0.001) {
-			placeId = place.id();
+			placeId = place.id;
 		}
 	});
 	return placeId;

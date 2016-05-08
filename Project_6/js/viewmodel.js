@@ -17,13 +17,13 @@ var initApp = function() {
 };
 
 var Place = function(place) {
-	this.id = ko.observable(place.id);
-	this.name = ko.observable(place.name.substring(12));
-	this.address = ko.observable(place.location.address);
-	this.city = ko.observable(place.location.city);
-	this.state = ko.observable(place.location.state);
-	this.lat = ko.observable(place.location.lat);
-	this.lng = ko.observable(place.location.lng);
+	this.id = place.id;
+	this.name = place.name.substring(12);
+	this.address = place.location.address;
+	this.city = place.location.city;
+	this.state = place.location.state;
+	this.lat = place.location.lat;
+	this.lng = place.location.lng;
 };
 
 var ViewModel = function() {
@@ -52,7 +52,7 @@ var ViewModel = function() {
 		//placeAssociation, makes an association between foursquare and google maps locations  
 		var places = placeAssociation.locations;
 		for (var i in places) {
-			if (self.currentPlace().id() == places[i].foursquare) {
+			if (self.currentPlace().id == places[i].foursquare) {
 				//loop markers
 				allMarkers.forEach(function(marker) {
 					//close all infowindow that may be open
@@ -68,7 +68,7 @@ var ViewModel = function() {
 							marker.setAnimation(null);
 						}, 750);
 						//set infowindow location information
-						marker.infowindow.setContent(getInfoWindowData(currentPlace().id()));
+						marker.infowindow.setContent(getInfoWindowData(currentPlace().id));
 						//marker.showInfoWindow();
 						marker.infowindow.open(map, marker);
 					}
@@ -84,7 +84,7 @@ var ViewModel = function() {
 		//Set current place from select list
 		ko.utils.arrayForEach(this.placeList(), function(place) {
 			if (this.selectedChoice() !== undefined) {
-				if ((place.name().toLowerCase().indexOf(this.selectedChoice().toLowerCase()) >= 0)) {
+				if ((place.name.toLowerCase().indexOf(this.selectedChoice().toLowerCase()) >= 0)) {
 					setPlace(place);
 				}
 			}
@@ -115,12 +115,12 @@ var ViewModel = function() {
 			});
 			//iterate placeList array
 			ko.utils.arrayForEach(this.placeList(), function(place) {
-				if ((place.name().toLowerCase().indexOf(query().toLowerCase()) >= 0) && (query().length > 0)) {
+				if ((place.name.toLowerCase().indexOf(query().toLowerCase()) >= 0) && (query().length > 0)) {
 					//put this location in the searchList array
 					searchList.push(place);
 					//show markers associated with search list
 					placeAssociation.locations.forEach(function(placeAssoc) {
-						if (place.id() == placeAssoc.foursquare) {
+						if (place.id == placeAssoc.foursquare) {
 							//loop markers to set associated marker visible
 							allMarkers.forEach(function(marker) {
 								if (placeAssoc.google == marker.id) {
