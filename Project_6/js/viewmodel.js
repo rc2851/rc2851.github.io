@@ -6,14 +6,8 @@ var tooltipContent = ko.observable();
 var msgData = ko.observable();
 
 var initApp = function() {
-	//load the data
+	//load the data from Foursquare
 	getFoursquareData();
-	loadBindings();
-	initializeMap();
-	if (document.getElementById('map') === null) {
-		//document.getElementById('mapDiv').style.display = 'none';
-		document.getElementById("mapDiv").style.backgroundColor = "black";
-	}
 };
 
 var Place = function(place) {
@@ -145,7 +139,11 @@ var ViewModel = function() {
 	});
 };
 
-//apply bindings
 var loadBindings = function() {
+	//apply bindings
 	ko.applyBindings(ViewModel);
+	//Google map initilization
+	initializeMap();
+	//set map bounds
+	map.fitBounds(mapBounds);
 };

@@ -32,6 +32,8 @@ function getFoursquareData() {
 					}
 				});
 			}
+		//load knockout bindings
+		loadBindings();
 		})
 		.fail(function() {
 			//display message to user
